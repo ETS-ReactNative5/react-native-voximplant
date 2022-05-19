@@ -8,7 +8,8 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {Voximplant} from 'react-native-voximplant';
+import VICore from '@voximplant/react-native-core';
+import VIMessaging from '@voximplant/react-native-messaging';
 import jet from 'jet/platform/react-native';
 
 
@@ -20,7 +21,8 @@ export default class App extends Component {
         };
 
         jet.exposeContextProperty('root', this);
-        jet.exposeContextProperty('module', Voximplant);
+        jet.exposeContextProperty('VICore', VICore);
+        jet.exposeContextProperty('VIMessaging', VIMessaging);
     }
 
     render() {

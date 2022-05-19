@@ -3,9 +3,15 @@ global.sinon = require('sinon');
 require('should-sinon');
 global.should = require('should');
 
-Object.defineProperty(global, 'Voximplant', {
+Object.defineProperty(global, 'VICore', {
   get() {
-    return jet.module;
+    return jet.VICore;
+  },
+});
+
+Object.defineProperty(global, 'VIMessaging', {
+  get() {
+    return jet.VIMessaging;
   },
 });
 
