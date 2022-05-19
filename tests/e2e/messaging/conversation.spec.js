@@ -7,7 +7,7 @@ const { TEST_LOGIN,
 describe('conversation', () => {
     let client = null;
     let messenger = null;
-
+    let me;
     let myIMid;
     let testUser2IMId;
     let testUser3IMId;
@@ -15,13 +15,13 @@ describe('conversation', () => {
     before(async () => {
         await device.reloadReactNative();
 
-        client = Voximplant.getInstance();
+        client = VICore.Client.getInstance();
         await client.connect();
         await client.login(TEST_LOGIN, TEST_PASSWORD);
 
-        messenger = Voximplant.getMessenger();
-
-        myIMid = (await messenger.getUserByName(messenger.getMe())).user.imId;
+        messenger = VIMessaging.Messenger.getInstance();
+        me = await messenger.getMe();
+        myIMid = (await messenger.getUserByName(me)).user.imId;
         testUser2IMId = (await messenger.getUserByName(TEST_USER_2)).user.imId;
         testUser3IMId = (await messenger.getUserByName(TEST_USER_3)).user.imId;
     });
@@ -40,8 +40,8 @@ describe('conversation', () => {
         let conversationEvent = await messenger.createConversation(conversationConfig);
         console.log(JSON.stringify(conversationEvent));
 
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -84,8 +84,8 @@ describe('conversation', () => {
 
         let conversationEvent = await messenger.createConversation(conversationConfig);
         console.log(JSON.stringify(conversationEvent));
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -137,8 +137,8 @@ describe('conversation', () => {
 
         let conversationEvent = await messenger.createConversation(conversationConfig);
         console.log(JSON.stringify(conversationEvent));
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -196,8 +196,8 @@ describe('conversation', () => {
 
         let conversationEvent = await messenger.createConversation(conversationConfig);
         console.log(JSON.stringify(conversationEvent));
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
 
         // if a direct conversation with the same user has been already created, the Messenger.createConversation will return already created conversation
@@ -249,8 +249,8 @@ describe('conversation', () => {
 
         let conversationEvent = await messenger.getConversation(conversationUUID);
         console.log(JSON.stringify(conversationEvent));
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.getConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.GetConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.getConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(conversationEvent.sequence, 'sequence should exist');
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -290,8 +290,8 @@ describe('conversation', () => {
         for (const event of conversationsEvent) {
             console.log(JSON.stringify(event));
             (event).should.not.be.null();
-            should.equal(event.eventType, Voximplant.Messaging.MessengerEventTypes.GetConversation, 'eventType is unexpected');
-            should.equal(event.action, Voximplant.Messaging.MessengerAction.getConversations, 'action is unexpected');
+            should.equal(event.eventType, VIMessaging.MessengerEvent.GetConversation, 'eventType is unexpected');
+            should.equal(event.action, VIMessaging.MessengerAction.getConversations, 'action is unexpected');
             should.equal(event.imUserId, myIMid, 'imUserId is unexpected');
             should.exist(event.sequence, 'sequence should exist');
             should.exist(event.timestamp, 'timestamp should exist');
@@ -317,8 +317,8 @@ describe('conversation', () => {
 
         let conversationListEvent = await messenger.getPublicConversations();
         console.log(JSON.stringify(conversationListEvent));
-        should.equal(conversationListEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetPublicConversations, 'eventType is unexpected');
-        should.equal(conversationListEvent.action, Voximplant.Messaging.MessengerAction.getPublicConversations, 'action is unexpected');
+        should.equal(conversationListEvent.eventType, VIMessaging.MessengerEvent.GetPublicConversations, 'eventType is unexpected');
+        should.equal(conversationListEvent.action, VIMessaging.MessengerAction.getPublicConversations, 'action is unexpected');
         should.equal(conversationListEvent.imUserId, myIMid, 'imUserId is unexpected');
 
         let conversations = conversationListEvent.conversationList.slice(0, 30);
@@ -331,8 +331,8 @@ describe('conversation', () => {
         for (const event of conversationsEvent) {
             console.log(JSON.stringify(event));
             (event).should.not.be.null();
-            should.equal(event.eventType, Voximplant.Messaging.MessengerEventTypes.GetConversation, 'eventType is unexpected');
-            should.equal(event.action, Voximplant.Messaging.MessengerAction.getConversations, 'action is unexpected');
+            should.equal(event.eventType, VIMessaging.MessengerEvent.GetConversation, 'eventType is unexpected');
+            should.equal(event.action, VIMessaging.MessengerAction.getConversations, 'action is unexpected');
             should.equal(event.imUserId, myIMid, 'imUserId is unexpected');
             should.exist(event.sequence, 'sequence should exist');
             should.exist(event.timestamp, 'timestamp should exist');
@@ -360,8 +360,8 @@ describe('conversation', () => {
         };
 
         let conversationEvent = await messenger.createConversation(conversationConfig);
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -375,8 +375,8 @@ describe('conversation', () => {
 
         let addParticipantEvent = await conversation.addParticipants([newParticipant]);
         console.log(JSON.stringify(addParticipantEvent));
-        should.equal(addParticipantEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-        should.equal(addParticipantEvent.action, Voximplant.Messaging.MessengerAction.addParticipants, 'action is unexpected');
+        should.equal(addParticipantEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+        should.equal(addParticipantEvent.action, VIMessaging.MessengerAction.addParticipants, 'action is unexpected');
         should.equal(addParticipantEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(addParticipantEvent.sequence, 2);
         should.exist(addParticipantEvent.timestamp, 'timestamp should exist');
@@ -436,8 +436,8 @@ describe('conversation', () => {
         };
 
         let conversationEvent = await messenger.createConversation(conversationConfig);
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -455,8 +455,8 @@ describe('conversation', () => {
 
         let editParticipantEvent = await conversation.editParticipants(editedParticipants);
         console.log(JSON.stringify(editParticipantEvent));
-        should.equal(editParticipantEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-        should.equal(editParticipantEvent.action, Voximplant.Messaging.MessengerAction.editParticipants, 'action is unexpected');
+        should.equal(editParticipantEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+        should.equal(editParticipantEvent.action, VIMessaging.MessengerAction.editParticipants, 'action is unexpected');
         should.equal(editParticipantEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(editParticipantEvent.sequence, 2);
         should.exist(editParticipantEvent.timestamp, 'timestamp should exist');
@@ -510,8 +510,8 @@ describe('conversation', () => {
         };
 
         let conversationEvent = await messenger.createConversation(conversationConfig);
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -527,8 +527,8 @@ describe('conversation', () => {
 
         let removeConversationEvent = await conversation.removeParticipants(removeParticipants);
         console.log(JSON.stringify(removeConversationEvent));
-        should.equal(removeConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-        should.equal(removeConversationEvent.action, Voximplant.Messaging.MessengerAction.removeParticipants, 'action is unexpected');
+        should.equal(removeConversationEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+        should.equal(removeConversationEvent.action, VIMessaging.MessengerAction.removeParticipants, 'action is unexpected');
         should.equal(removeConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(removeConversationEvent.sequence, 2);
         should.exist(removeConversationEvent.timestamp, 'timestamp should exist');
@@ -569,8 +569,8 @@ describe('conversation', () => {
         let conversationEvent = await messenger.createConversation(conversationConfig);
         console.log(JSON.stringify(conversationEvent));
 
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -594,10 +594,10 @@ describe('conversation', () => {
         };
         conversation.customData = customData;
 
-        let updateConversationEvent = await conversation.update();
+        let updateConversationEvent = await conversation.updateConversation();
         console.log(JSON.stringify(updateConversationEvent));
-        should.equal(updateConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-        should.equal(updateConversationEvent.action, Voximplant.Messaging.MessengerAction.editConversation, 'action is unexpected');
+        should.equal(updateConversationEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+        should.equal(updateConversationEvent.action, VIMessaging.MessengerAction.editConversation, 'action is unexpected');
         should.equal(updateConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(updateConversationEvent.sequence, 2);
         should.exist(updateConversationEvent.timestamp, 'timestamp should exist');
@@ -624,8 +624,8 @@ describe('conversation', () => {
         let conversationEvent = await messenger.createConversation(conversationConfig);
         console.log(JSON.stringify(conversationEvent));
 
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -643,8 +643,8 @@ describe('conversation', () => {
 
         let typingEvent = await conversation.typing();
         console.log(JSON.stringify(typingEvent));
-        should.equal(typingEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Typing, 'eventType is unexpected');
-        should.equal(typingEvent.action, Voximplant.Messaging.MessengerAction.typing, 'action is unexpected');
+        should.equal(typingEvent.eventType, VIMessaging.MessengerEvent.Typing, 'eventType is unexpected');
+        should.equal(typingEvent.action, VIMessaging.MessengerAction.typing, 'action is unexpected');
         should.equal(typingEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(typingEvent.conversationUUID, conversation.uuid);
     });
@@ -657,8 +657,8 @@ describe('conversation', () => {
         let conversationEvent = await messenger.createConversation(conversationConfig);
         console.log(JSON.stringify(conversationEvent));
 
-        should.equal(conversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-        should.equal(conversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+        should.equal(conversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+        should.equal(conversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
         should.equal(conversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(conversationEvent.sequence, 1);
         should.exist(conversationEvent.timestamp, 'timestamp should exist');
@@ -669,8 +669,8 @@ describe('conversation', () => {
 
         let messageEvent = await conversation.sendMessage('test message');
         console.log(JSON.stringify(messageEvent));
-        should.equal(messageEvent.eventType, Voximplant.Messaging.MessengerEventTypes.SendMessage, 'eventType is unexpected');
-        should.equal(messageEvent.action, Voximplant.Messaging.MessengerAction.sendMessage, 'action is unexpected');
+        should.equal(messageEvent.eventType, VIMessaging.MessengerEvent.SendMessage, 'eventType is unexpected');
+        should.equal(messageEvent.action, VIMessaging.MessengerAction.sendMessage, 'action is unexpected');
         should.equal(messageEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.equal(messageEvent.sequence, 2, 'sequence is unexpected');
         should.exist(messageEvent.timestamp);
@@ -687,8 +687,8 @@ describe('conversation', () => {
 
         let conversationListEvent = await messenger.getPublicConversations();
         console.log(JSON.stringify(conversationListEvent));
-        should.equal(conversationListEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetPublicConversations, 'eventType is unexpected');
-        should.equal(conversationListEvent.action, Voximplant.Messaging.MessengerAction.getPublicConversations, 'action is unexpected');
+        should.equal(conversationListEvent.eventType, VIMessaging.MessengerEvent.GetPublicConversations, 'eventType is unexpected');
+        should.equal(conversationListEvent.action, VIMessaging.MessengerAction.getPublicConversations, 'action is unexpected');
         should.equal(conversationListEvent.imUserId, myIMid, 'imUserId is unexpected');
 
         let conversationUUID = null;
@@ -705,8 +705,8 @@ describe('conversation', () => {
             };
             let createConversationEvent = await messenger.createConversation(conversationConfig);
             console.log(JSON.stringify(createConversationEvent));
-            should.equal(createConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-            should.equal(createConversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+            should.equal(createConversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+            should.equal(createConversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
             should.equal(createConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
             should.exist(createConversationEvent.conversation);
 
@@ -716,8 +716,8 @@ describe('conversation', () => {
 
             let getConversationEvent = await messenger.getConversation(conversationListEvent.conversationList[0]);
             console.log(JSON.stringify(getConversationEvent));
-            should.equal(getConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetConversation, 'eventType is unexpected');
-            should.equal(getConversationEvent.action, Voximplant.Messaging.MessengerAction.getConversation, 'action is unexpected');
+            should.equal(getConversationEvent.eventType, VIMessaging.MessengerEvent.GetConversation, 'eventType is unexpected');
+            should.equal(getConversationEvent.action, VIMessaging.MessengerAction.getConversation, 'action is unexpected');
             should.equal(getConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
             should.exist(getConversationEvent.conversation);
 
@@ -727,8 +727,8 @@ describe('conversation', () => {
                 if (participant.imUserId === myIMid) {
                     let leaveConversationEvent = await messenger.leaveConversation(conversationUUID);
                     console.log(JSON.stringify(leaveConversationEvent));
-                    should.equal(leaveConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-                    should.equal(leaveConversationEvent.action, Voximplant.Messaging.MessengerAction.leaveConversation, 'action is unexpected');
+                    should.equal(leaveConversationEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+                    should.equal(leaveConversationEvent.action, VIMessaging.MessengerAction.leaveConversation, 'action is unexpected');
                     should.equal(leaveConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
 
                     conversationUUID = leaveConversationEvent.conversation.uuid;
@@ -739,8 +739,8 @@ describe('conversation', () => {
 
         let joinConversationEvent = await messenger.joinConversation(conversationUUID);
         console.log(JSON.stringify(joinConversationEvent));
-        should.equal(joinConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-        should.equal(joinConversationEvent.action, Voximplant.Messaging.MessengerAction.joinConversation, 'action is unexpected');
+        should.equal(joinConversationEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+        should.equal(joinConversationEvent.action, VIMessaging.MessengerAction.joinConversation, 'action is unexpected');
         should.equal(joinConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(joinConversationEvent.conversation);
         should.equal(joinConversationEvent.conversation.uuid, conversationUUID);
@@ -757,8 +757,8 @@ describe('conversation', () => {
 
         let leaveConversationEvent = await messenger.leaveConversation(conversationUUID);
         console.log(JSON.stringify(leaveConversationEvent));
-        should.equal(leaveConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-        should.equal(leaveConversationEvent.action, Voximplant.Messaging.MessengerAction.leaveConversation, 'action is unexpected');
+        should.equal(leaveConversationEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+        should.equal(leaveConversationEvent.action, VIMessaging.MessengerAction.leaveConversation, 'action is unexpected');
         should.equal(leaveConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(leaveConversationEvent.conversation);
         should.equal(leaveConversationEvent.conversation.uuid, conversationUUID);
@@ -766,8 +766,8 @@ describe('conversation', () => {
 
         let getUserEvent = await messenger.getUserByIMId(myIMid);
         console.log(JSON.stringify(getUserEvent));
-        should.equal(getUserEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetUser, 'eventType is unexpected');
-        should.equal(getUserEvent.action, Voximplant.Messaging.MessengerAction.getUser, 'action is unexpected');
+        should.equal(getUserEvent.eventType, VIMessaging.MessengerEvent.GetUser, 'eventType is unexpected');
+        should.equal(getUserEvent.action, VIMessaging.MessengerAction.getUser, 'action is unexpected');
         should.equal(getUserEvent.imUserId, myIMid, 'imUserId is unexpected');
         (getUserEvent.user.leaveConversationList).should.containEql(conversationUUID);
 
@@ -803,8 +803,8 @@ describe('conversation', () => {
                 };
 
                 let createConversationEvent = await messenger.createConversation(conversationConfig);
-                should.equal(createConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.CreateConversation, 'eventType is unexpected');
-                should.equal(createConversationEvent.action, Voximplant.Messaging.MessengerAction.createConversation, 'action is unexpected');
+                should.equal(createConversationEvent.eventType, VIMessaging.MessengerEvent.CreateConversation, 'eventType is unexpected');
+                should.equal(createConversationEvent.action, VIMessaging.MessengerAction.createConversation, 'action is unexpected');
                 should.equal(createConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
                 should.equal(createConversationEvent.sequence, 1);
                 should.exist(createConversationEvent.timestamp, 'timestamp should exist');
@@ -814,8 +814,8 @@ describe('conversation', () => {
 
                 // 2. send message
                 let sendMessageEvent = await conversation.sendMessage('test message');
-                should.equal(sendMessageEvent.eventType, Voximplant.Messaging.MessengerEventTypes.SendMessage, 'eventType is unexpected');
-                should.equal(sendMessageEvent.action, Voximplant.Messaging.MessengerAction.sendMessage, 'action is unexpected');
+                should.equal(sendMessageEvent.eventType, VIMessaging.MessengerEvent.SendMessage, 'eventType is unexpected');
+                should.equal(sendMessageEvent.action, VIMessaging.MessengerAction.sendMessage, 'action is unexpected');
                 should.equal(sendMessageEvent.imUserId, myIMid, 'imUserId is unexpected');
                 should.equal(sendMessageEvent.sequence, 2, 'sequence is unexpected');
                 should.exist(sendMessageEvent.timestamp);
@@ -824,24 +824,24 @@ describe('conversation', () => {
 
                 // 3. edit conversation title
                 conversation.title = 'Test conversation';
-                let editConversationEvent = await conversation.update();
-                should.equal(editConversationEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditConversation, 'eventType is unexpected');
-                should.equal(editConversationEvent.action, Voximplant.Messaging.MessengerAction.editConversation, 'action is unexpected');
+                let editConversationEvent = await conversation.updateConversation();
+                should.equal(editConversationEvent.eventType, VIMessaging.MessengerEvent.EditConversation, 'eventType is unexpected');
+                should.equal(editConversationEvent.action, VIMessaging.MessengerAction.editConversation, 'action is unexpected');
                 should.equal(editConversationEvent.imUserId, myIMid, 'imUserId is unexpected');
                 should.equal(editConversationEvent.sequence, 3, 'sequence is unexpected');
                 conversation = editConversationEvent.conversation;
 
                 // 4. edit message
-                let editMessageEvent = await message.update('updated test message', null);
-                should.equal(editMessageEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditMessage, 'eventType is unexpected');
-                should.equal(editMessageEvent.action, Voximplant.Messaging.MessengerAction.editMessage, 'action is unexpected');
+                let editMessageEvent = await message.updateMessage('updated test message', null);
+                should.equal(editMessageEvent.eventType, VIMessaging.MessengerEvent.EditMessage, 'eventType is unexpected');
+                should.equal(editMessageEvent.action, VIMessaging.MessengerAction.editMessage, 'action is unexpected');
                 should.equal(editMessageEvent.imUserId, myIMid, 'imUserId is unexpected');
                 should.equal(editMessageEvent.sequence, 4, 'sequence is unexpected');
 
                 // 5. send message
                 let sendMessageEvent2 = await conversation.sendMessage('another test message');
-                should.equal(sendMessageEvent2.eventType, Voximplant.Messaging.MessengerEventTypes.SendMessage, 'eventType is unexpected');
-                should.equal(sendMessageEvent2.action, Voximplant.Messaging.MessengerAction.sendMessage, 'action is unexpected');
+                should.equal(sendMessageEvent2.eventType, VIMessaging.MessengerEvent.SendMessage, 'eventType is unexpected');
+                should.equal(sendMessageEvent2.action, VIMessaging.MessengerAction.sendMessage, 'action is unexpected');
                 should.equal(sendMessageEvent2.imUserId, myIMid, 'imUserId is unexpected');
                 should.equal(sendMessageEvent2.sequence, 5, 'sequence is unexpected');
                 should.exist(sendMessageEvent2.timestamp);
@@ -849,9 +849,9 @@ describe('conversation', () => {
                 message = sendMessageEvent2.message;
 
                 // 6. remove message
-                let removeMessageEvent = await message.remove();
-                should.equal(removeMessageEvent.eventType, Voximplant.Messaging.MessengerEventTypes.RemoveMessage, 'eventType is unexpected');
-                should.equal(removeMessageEvent.action, Voximplant.Messaging.MessengerAction.removeMessage, 'action is unexpected');
+                let removeMessageEvent = await message.removeMessage();
+                should.equal(removeMessageEvent.eventType, VIMessaging.MessengerEvent.RemoveMessage, 'eventType is unexpected');
+                should.equal(removeMessageEvent.action, VIMessaging.MessengerAction.removeMessage, 'action is unexpected');
                 should.equal(removeMessageEvent.imUserId, myIMid, 'imUserId is unexpected');
                 should.equal(removeMessageEvent.sequence, 6, 'sequence is unexpected');
                 should.exist(removeMessageEvent.timestamp);
@@ -871,8 +871,8 @@ describe('conversation', () => {
                     this.fail('unexpected retransmit mode');
                 }
                 console.log(JSON.stringify(retransmitEvent));
-                should.equal(retransmitEvent.eventType, Voximplant.Messaging.MessengerEventTypes.RetransmitEvents, 'eventType is unexpected');
-                should.equal(retransmitEvent.action, Voximplant.Messaging.MessengerAction.retransmitEvents, 'action is unexpected');
+                should.equal(retransmitEvent.eventType, VIMessaging.MessengerEvent.RetransmitEvents, 'eventType is unexpected');
+                should.equal(retransmitEvent.action, VIMessaging.MessengerAction.retransmitEvents, 'action is unexpected');
                 should.equal(retransmitEvent.imUserId, myIMid, 'imUserId is unexpected');
                 should.equal(retransmitEvent.from, 1);
                 should.equal(retransmitEvent.to, 6);

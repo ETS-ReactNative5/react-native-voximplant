@@ -10,6 +10,7 @@ describe('error - conversations', () => {
     let messenger = null;
 
     let conversation = null;
+    let me;
 
     let myIMid;
     let testUser2IMId;
@@ -18,13 +19,13 @@ describe('error - conversations', () => {
     before(async () => {
         await device.reloadReactNative();
 
-        client = Voximplant.getInstance();
+        client = VICore.Client.getInstance();
         await client.connect();
         await client.login(TEST_LOGIN, TEST_PASSWORD);
 
-        messenger = Voximplant.getMessenger();
-
-        myIMid = (await messenger.getUserByName(messenger.getMe())).user.imId;
+        messenger = VIMessaging.Messenger.getInstance();
+        me = await messenger.getMe();
+        myIMid = (await messenger.getUserByName(me)).user.imId;
         testUser2IMId = (await messenger.getUserByName(TEST_USER_2)).user.imId;
         testUser3IMId = (await messenger.getUserByName(TEST_USER_3)).user.imId;
     });
@@ -49,12 +50,12 @@ describe('error - conversations', () => {
         should.exist(messenger);
         try {
             await messenger.createConversation(conversationConfig);
-        } catch (errorEvent) {
-            console.log(JSON.stringify(errorEvent));
-            should.equal(errorEvent.code, 34);
-            should.equal(errorEvent.description, 'Direct conversation cannot be public or uber.');
-            should.equal(errorEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Error);
-            should.equal(errorEvent.action, Voximplant.Messaging.MessengerAction.createConversation);
+        } catch (error) {
+            console.log(JSON.stringify(error));
+            should.equal(error.userInfo.code, 34);
+            should.equal(error.userInfo.description, 'Direct conversation cannot be public or uber.');
+            should.equal(error.userInfo.eventType, VIMessaging.MessengerEvent.Error);
+            should.equal(error.userInfo.action, VIMessaging.MessengerAction.createConversation);
         }
     });
 
@@ -74,12 +75,12 @@ describe('error - conversations', () => {
         should.exist(messenger);
         try {
             await messenger.createConversation(conversationConfig);
-        } catch (errorEvent) {
-            console.log(JSON.stringify(errorEvent));
-            should.equal(errorEvent.code, 34);
-            should.equal(errorEvent.description, 'Direct conversation cannot be public or uber.');
-            should.equal(errorEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Error);
-            should.equal(errorEvent.action, Voximplant.Messaging.MessengerAction.createConversation);
+        } catch (error) {
+            console.log(JSON.stringify(error));
+            should.equal(error.userInfo.code, 34);
+            should.equal(error.userInfo.description, 'Direct conversation cannot be public or uber.');
+            should.equal(error.userInfo.eventType, VIMessaging.MessengerEvent.Error);
+            should.equal(error.userInfo.action, VIMessaging.MessengerAction.createConversation);
         }
     });
 
@@ -91,12 +92,12 @@ describe('error - conversations', () => {
         should.exist(messenger);
         try {
             await messenger.createConversation(conversationConfig);
-        } catch (errorEvent) {
-            console.log(JSON.stringify(errorEvent));
-            should.equal(errorEvent.code, 35);
-            should.equal(errorEvent.description, 'Direct conversation is allowed between two users only.');
-            should.equal(errorEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Error);
-            should.equal(errorEvent.action, Voximplant.Messaging.MessengerAction.createConversation);
+        } catch (error) {
+            console.log(JSON.stringify(error));
+            should.equal(error.userInfo.code, 35);
+            should.equal(error.userInfo.description, 'Direct conversation is allowed between two users only.');
+            should.equal(error.userInfo.eventType, VIMessaging.MessengerEvent.Error);
+            should.equal(error.userInfo.action, VIMessaging.MessengerAction.createConversation);
         }
     });
 

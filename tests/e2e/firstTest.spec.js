@@ -6,7 +6,7 @@ describe('Example', () => {
     });
 
     it('client exist', () => {
-       const client = Voximplant.getInstance();
+       const client = VICore.Client.getInstance();
        should.exist(client);
     });
 

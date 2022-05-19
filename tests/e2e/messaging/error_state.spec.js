@@ -1,5 +1,6 @@
 const should = require('should');
 
+//TODO: change errorEvent to userInfo and change promise reject on native side
 const { TEST_LOGIN,
     TEST_PASSWORD,
     TEST_USER_2,
@@ -10,7 +11,7 @@ describe('error - invalid states', () => {
 
     before(async() => {
         await device.reloadReactNative();
-        client = Voximplant.getInstance();
+        client = VICore.Client.getInstance();
         await client.connect();
         await client.login(TEST_LOGIN, TEST_PASSWORD);
     });
@@ -20,7 +21,7 @@ describe('error - invalid states', () => {
      });
 
     it('use messenger before client', async () => {
-        let messenger = Voximplant.getMessenger();
+        let messenger = VIMessaging.Messenger.getInstance();
 
         should.exist(messenger);
         try {
@@ -29,8 +30,8 @@ describe('error - invalid states', () => {
             console.log(JSON.stringify(errorEvent));
             should.equal(errorEvent.code, 10003);
             should.equal(errorEvent.description, 'Client is not logged in.');
-            should.equal(errorEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Error);
-            should.equal(errorEvent.action, Voximplant.Messaging.MessengerAction.getUser);
+            should.equal(errorEvent.eventType, VIMessaging.MessengerEventType.Error);
+            should.equal(errorEvent.action, VIMessaging.MessengerAction.getUser);
         }
 
     });

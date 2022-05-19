@@ -11,33 +11,33 @@ describe('user', () => {
     let myUser;
     let testUser2IMId;
     let testUser3IMId;
+    let me;
 
     before(async() => {
         await device.reloadReactNative();
 
-        client = Voximplant.getInstance();
+        client = VICore.Client.getInstance();
         await client.connect();
         await client.login(TEST_LOGIN, TEST_PASSWORD);
-        messenger = Voximplant.getMessenger();
+        messenger = VIMessaging.Messenger.getInstance();
+        me = await messenger.getMe();
     });
 
     after(async() => {
        await client.disconnect();
     });
 
-    it('get me', () => {
-        messenger.should.be.not.null();
-        const me = messenger.getMe();
+    it('get me', async () => {
         TEST_LOGIN.should.containEql(me);
     });
 
     it('get user (me) by name', async () => {
         messenger.should.be.not.null();
 
-        let userEvent = await messenger.getUserByName(messenger.getMe());
+        let userEvent = await messenger.getUserByName(me);
         console.log(JSON.stringify(userEvent));
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.getUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.GetUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.getUser, 'action is unexpected');
         should.exist(userEvent.imUserId);
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -46,7 +46,7 @@ describe('user', () => {
 
         myIMid = user.imId;
         myUser = user;
-        should.equal(user.name, messenger.getMe(), 'user name is unexpected');
+        should.equal(user.name, me, 'user name is unexpected');
         (user.isDeleted).should.be.false('user should not be deleted');
     });
 
@@ -56,8 +56,8 @@ describe('user', () => {
         let userEvent = await messenger.getUserByIMId(myIMid);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.getUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.GetUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.getUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -82,8 +82,8 @@ describe('user', () => {
         let userEvent = await messenger.getUserByName(TEST_USER_2);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.getUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.GetUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.getUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -102,8 +102,8 @@ describe('user', () => {
         let userEvent = await messenger.getUserByIMId(testUser2IMId);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.getUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.GetUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.getUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -120,7 +120,7 @@ describe('user', () => {
     it('get users by name', async () => {
         messenger.should.be.not.null();
 
-        const users = [messenger.getMe(), TEST_USER_2, TEST_USER_3];
+        const users = [me, TEST_USER_2, TEST_USER_3];
         let userEvents = await messenger.getUsersByName(users);
 
         (userEvents).should.be.Array();
@@ -129,8 +129,8 @@ describe('user', () => {
         for (const userEvent of userEvents) {
             console.log('USER: ');
             console.log(JSON.stringify(userEvent));
-            should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetUser, 'eventType is unexpected');
-            should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.getUsers, 'action is unexpected');
+            should.equal(userEvent.eventType, VIMessaging.MessengerEvent.GetUser, 'eventType is unexpected');
+            should.equal(userEvent.action, VIMessaging.MessengerAction.getUsers, 'action is unexpected');
             should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
             should.exist(userEvent.user);
 
@@ -161,8 +161,8 @@ describe('user', () => {
         for (const userEvent of userEvents) {
             console.log('USER: ');
             console.log(JSON.stringify(userEvent));
-            should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetUser, 'eventType is unexpected');
-            should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.getUsers, 'action is unexpected');
+            should.equal(userEvent.eventType, VIMessaging.MessengerEvent.GetUser, 'eventType is unexpected');
+            should.equal(userEvent.action, VIMessaging.MessengerAction.getUsers, 'action is unexpected');
             should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
             should.exist(userEvent.user);
 
@@ -196,8 +196,8 @@ describe('user', () => {
         let userEvent = await messenger.editUser(customDataTest, privateCustomDataTest);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.editUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.editUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -222,8 +222,8 @@ describe('user', () => {
         let userEvent = await messenger.editUser(customDataTest, privateCustomDataTest);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.editUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.editUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -248,8 +248,8 @@ describe('user', () => {
         let userEvent = await messenger.editUser(customDataTest, privateCustomDataTest);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.editUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.editUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -274,8 +274,8 @@ describe('user', () => {
         let userEvent = await messenger.editUser(customDataTest, privateCustomDataTest);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.editUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.editUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -300,8 +300,8 @@ describe('user', () => {
         let userEvent = await messenger.editUser(customDataTest, privateCustomDataTest);
         console.log(JSON.stringify(userEvent));
 
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.editUser, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.editUser, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(userEvent.user);
         const user = userEvent.user;
@@ -329,8 +329,8 @@ describe('user', () => {
         console.log('EDIT USER:');
         console.log(JSON.stringify(editUserEvent));
 
-        should.equal(editUserEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(editUserEvent.action, Voximplant.Messaging.MessengerAction.editUser, 'action is unexpected');
+        should.equal(editUserEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(editUserEvent.action, VIMessaging.MessengerAction.editUser, 'action is unexpected');
         should.equal(editUserEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(editUserEvent.user);
         const user = editUserEvent.user;
@@ -348,8 +348,8 @@ describe('user', () => {
         let editUserEvent = await messenger.editUser({}, null);
         console.log(JSON.stringify(editUserEvent));
 
-        should.equal(editUserEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(editUserEvent.action, Voximplant.Messaging.MessengerAction.editUser, 'action is unexpected');
+        should.equal(editUserEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(editUserEvent.action, VIMessaging.MessengerAction.editUser, 'action is unexpected');
         should.equal(editUserEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(editUserEvent.user);
         const user = editUserEvent.user;
@@ -366,8 +366,8 @@ describe('user', () => {
         let statusEvent = await messenger.setStatus(true);
         console.log(JSON.stringify(statusEvent));
 
-        should.equal(statusEvent.eventType, Voximplant.Messaging.MessengerEventTypes.SetStatus);
-        should.equal(statusEvent.action, Voximplant.Messaging.MessengerAction.setStatus);
+        should.equal(statusEvent.eventType, VIMessaging.MessengerEvent.SetStatus);
+        should.equal(statusEvent.action, VIMessaging.MessengerAction.setStatus);
         should.equal(statusEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(statusEvent.online);
         (statusEvent.online).should.be.true();
@@ -379,8 +379,8 @@ describe('user', () => {
         let statusEvent = await messenger.setStatus(false);
         console.log(JSON.stringify(statusEvent));
 
-        should.equal(statusEvent.eventType, Voximplant.Messaging.MessengerEventTypes.SetStatus);
-        should.equal(statusEvent.action, Voximplant.Messaging.MessengerAction.setStatus);
+        should.equal(statusEvent.eventType, VIMessaging.MessengerEvent.SetStatus);
+        should.equal(statusEvent.action, VIMessaging.MessengerAction.setStatus);
         should.equal(statusEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(statusEvent.online);
         (statusEvent.online).should.be.false();
@@ -397,16 +397,16 @@ describe('user', () => {
         let subscriptionEvent = await messenger.subscribe(usersToSubscribe);
         console.log(JSON.stringify(subscriptionEvent));
 
-        should.equal(subscriptionEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Subscribe);
-        should.equal(subscriptionEvent.action, Voximplant.Messaging.MessengerAction.subscribe);
+        should.equal(subscriptionEvent.eventType, VIMessaging.MessengerEvent.Subscribe);
+        should.equal(subscriptionEvent.action, VIMessaging.MessengerAction.subscribe);
         should.equal(subscriptionEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(subscriptionEvent.users);
         ((subscriptionEvent.users)).should.deepEqual(usersToSubscribe);
 
-        let getSubscriptionEvent = await messenger.getSubscriptions();
+        let getSubscriptionEvent = await messenger.getSubscriptionList();
         console.log(JSON.stringify(getSubscriptionEvent));
-        should.equal(getSubscriptionEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetSubscriptions);
-        should.equal(getSubscriptionEvent.action, Voximplant.Messaging.MessengerAction.getSubscriptions);
+        should.equal(getSubscriptionEvent.eventType, VIMessaging.MessengerEvent.GetSubscriptions);
+        should.equal(getSubscriptionEvent.action, VIMessaging.MessengerAction.getSubscriptions);
         should.equal(getSubscriptionEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(getSubscriptionEvent.users);
 
@@ -416,10 +416,10 @@ describe('user', () => {
     it('unsubscribe from user2', async () => {
         messenger.should.be.not.null();
 
-        let getSubscriptionEvent = await messenger.getSubscriptions();
+        let getSubscriptionEvent = await messenger.getSubscriptionList();
         console.log(JSON.stringify(getSubscriptionEvent));
-        should.equal(getSubscriptionEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetSubscriptions);
-        should.equal(getSubscriptionEvent.action, Voximplant.Messaging.MessengerAction.getSubscriptions);
+        should.equal(getSubscriptionEvent.eventType, VIMessaging.MessengerEvent.GetSubscriptions);
+        should.equal(getSubscriptionEvent.action, VIMessaging.MessengerAction.getSubscriptions);
         should.equal(getSubscriptionEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(getSubscriptionEvent.users);
 
@@ -430,8 +430,8 @@ describe('user', () => {
 
         let unsubscribeEvent = await messenger.unsubscribe([testUser2IMId]);
         console.log(JSON.stringify(unsubscribeEvent));
-        should.equal(unsubscribeEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Unsubscribe);
-        should.equal(unsubscribeEvent.action, Voximplant.Messaging.MessengerAction.unsubscribe);
+        should.equal(unsubscribeEvent.eventType, VIMessaging.MessengerEvent.Unsubscribe);
+        should.equal(unsubscribeEvent.action, VIMessaging.MessengerAction.unsubscribe);
         should.equal(unsubscribeEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(unsubscribeEvent.users);
         (unsubscribeEvent.users).should.have.length(1);
@@ -440,10 +440,10 @@ describe('user', () => {
 
     it('unsubscribe from all', async () => {
         messenger.should.be.not.null();
-        let getSubscriptionEvent = await messenger.getSubscriptions();
+        let getSubscriptionEvent = await messenger.getSubscriptionList();
         console.log(JSON.stringify(getSubscriptionEvent));
-        should.equal(getSubscriptionEvent.eventType, Voximplant.Messaging.MessengerEventTypes.GetSubscriptions);
-        should.equal(getSubscriptionEvent.action, Voximplant.Messaging.MessengerAction.getSubscriptions);
+        should.equal(getSubscriptionEvent.eventType, VIMessaging.MessengerEvent.GetSubscriptions);
+        should.equal(getSubscriptionEvent.action, VIMessaging.MessengerAction.getSubscriptions);
         should.equal(getSubscriptionEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(getSubscriptionEvent.users);
 
@@ -458,8 +458,8 @@ describe('user', () => {
 
         let unsubscribeEvent = await messenger.unsubscribeFromAll();
         console.log(JSON.stringify(unsubscribeEvent));
-        should.equal(unsubscribeEvent.eventType, Voximplant.Messaging.MessengerEventTypes.Unsubscribe);
-        should.equal(unsubscribeEvent.action, Voximplant.Messaging.MessengerAction.unsubscribe);
+        should.equal(unsubscribeEvent.eventType, VIMessaging.MessengerEvent.Unsubscribe);
+        should.equal(unsubscribeEvent.action, VIMessaging.MessengerAction.unsubscribe);
         should.equal(unsubscribeEvent.imUserId, myIMid, 'imUserId is unexpected');
         should.exist(unsubscribeEvent.users);
 
@@ -470,15 +470,15 @@ describe('user', () => {
     it('enable SendMessage push notification', async () =>  {
         messenger.should.not.be.null();
 
-        let userEvent = await messenger.managePushNotifications([Voximplant.Messaging.MessengerNotification.SendMessage]);
+        let userEvent = await messenger.managePushNotifications([VIMessaging.UserNotification.SendMessage]);
         console.log(JSON.stringify(userEvent));
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.manageNotifications, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.manageNotifications, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
 
         (userEvent.user).should.have.keys('imId', 'name', 'displayName', 'conversationList', 'leaveConversationList', 'notifications',
             'customData', 'privateCustomData', 'isDeleted');
-        (userEvent.user.notifications).should.containEql(Voximplant.Messaging.MessengerNotification.SendMessage);
+        (userEvent.user.notifications).should.containEql(VIMessaging.UserNotification.SendMessage);
     });
 
     it('disable all push notifications', async () => {
@@ -486,8 +486,8 @@ describe('user', () => {
 
         let userEvent = await messenger.managePushNotifications([]);
         console.log(JSON.stringify(userEvent));
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.manageNotifications, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.manageNotifications, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
 
         (userEvent.user).should.have.keys('imId', 'name', 'displayName', 'conversationList', 'leaveConversationList', 'notifications',
@@ -500,8 +500,8 @@ describe('user', () => {
 
         let userEvent = await messenger.managePushNotifications(null);
         console.log(JSON.stringify(userEvent));
-        should.equal(userEvent.eventType, Voximplant.Messaging.MessengerEventTypes.EditUser, 'eventType is unexpected');
-        should.equal(userEvent.action, Voximplant.Messaging.MessengerAction.manageNotifications, 'action is unexpected');
+        should.equal(userEvent.eventType, VIMessaging.MessengerEvent.EditUser, 'eventType is unexpected');
+        should.equal(userEvent.action, VIMessaging.MessengerAction.manageNotifications, 'action is unexpected');
         should.equal(userEvent.imUserId, myIMid, 'imUserId is unexpected');
 
         (userEvent.user).should.have.keys('imId', 'name', 'displayName', 'conversationList', 'leaveConversationList', 'notifications',
