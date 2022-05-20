@@ -1,6 +1,5 @@
 const should = require('should');
 
-//TODO: change errorEvent to userInfo and change promise reject on native side
 const { TEST_LOGIN,
     TEST_PASSWORD,
     TEST_USER_2,

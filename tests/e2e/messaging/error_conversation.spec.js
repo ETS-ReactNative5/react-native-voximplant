@@ -50,12 +50,12 @@ describe('error - conversations', () => {
         should.exist(messenger);
         try {
             await messenger.createConversation(conversationConfig);
-        } catch (error) {
-            console.log(JSON.stringify(error));
-            should.equal(error.userInfo.code, 34);
-            should.equal(error.userInfo.description, 'Direct conversation cannot be public or uber.');
-            should.equal(error.userInfo.eventType, VIMessaging.MessengerEvent.Error);
-            should.equal(error.userInfo.action, VIMessaging.MessengerAction.createConversation);
+        } catch (errorEvent) {
+            console.log(JSON.stringify(errorEvent));
+            should.equal(errorEvent.code, 34);
+            should.equal(errorEvent.description, 'Direct conversation cannot be public or uber.');
+            should.equal(errorEvent.eventType, VIMessaging.MessengerEvent.Error);
+            should.equal(errorEvent.action, VIMessaging.MessengerAction.createConversation);
         }
     });
 
@@ -75,12 +75,12 @@ describe('error - conversations', () => {
         should.exist(messenger);
         try {
             await messenger.createConversation(conversationConfig);
-        } catch (error) {
-            console.log(JSON.stringify(error));
-            should.equal(error.userInfo.code, 34);
-            should.equal(error.userInfo.description, 'Direct conversation cannot be public or uber.');
-            should.equal(error.userInfo.eventType, VIMessaging.MessengerEvent.Error);
-            should.equal(error.userInfo.action, VIMessaging.MessengerAction.createConversation);
+        } catch (errorEvent) {
+            console.log(JSON.stringify(errorEvent));
+            should.equal(errorEvent.code, 34);
+            should.equal(errorEvent.description, 'Direct conversation cannot be public or uber.');
+            should.equal(errorEvent.eventType, VIMessaging.MessengerEvent.Error);
+            should.equal(errorEvent.action, VIMessaging.MessengerAction.createConversation);
         }
     });
 
@@ -92,12 +92,12 @@ describe('error - conversations', () => {
         should.exist(messenger);
         try {
             await messenger.createConversation(conversationConfig);
-        } catch (error) {
-            console.log(JSON.stringify(error));
-            should.equal(error.userInfo.code, 35);
-            should.equal(error.userInfo.description, 'Direct conversation is allowed between two users only.');
-            should.equal(error.userInfo.eventType, VIMessaging.MessengerEvent.Error);
-            should.equal(error.userInfo.action, VIMessaging.MessengerAction.createConversation);
+        } catch (errorEvent) {
+            console.log(JSON.stringify(errorEvent));
+            should.equal(errorEvent.code, 35);
+            should.equal(errorEvent.description, 'Direct conversation is allowed between two users only.');
+            should.equal(errorEvent.eventType, VIMessaging.MessengerEvent.Error);
+            should.equal(errorEvent.action, VIMessaging.MessengerAction.createConversation);
         }
     });
 
